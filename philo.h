@@ -6,7 +6,7 @@
 /*   By: cwolf <cwolf@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 17:20:04 by cwolf             #+#    #+#             */
-/*   Updated: 2025/04/01 18:15:44 by cwolf            ###   ########.fr       */
+/*   Updated: 2025/04/08 14:13:04 by cwolf            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ typedef struct s_simulation {
     int must_eat;
     pthread_mutex_t *forks; // mutex auf forks
     pthread_mutex_t print_lock; // mutex auf print ausgabe 
+    pthread_mutex_t monitor_lock; //mutex auf Kellner
     t_philosopher *philosophers; // array von Philosophen 
     long start_time; // Startzeitpunkt der Simulation
 } t_simulation;

@@ -6,7 +6,7 @@
 /*   By: cwolf <cwolf@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 14:27:12 by cwolf             #+#    #+#             */
-/*   Updated: 2025/04/01 16:11:00 by cwolf            ###   ########.fr       */
+/*   Updated: 2025/04/07 17:14:45 by cwolf            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,15 +21,17 @@ t_simulation *init_simulation(int argc, char **argv)
 	i = 0;
 	sim = gc_alloc(sizeof(t_simulation));
 
-	sim->num_philosophers = ft_atoi(argv[1]);
+	sim->num_philosophers = ft_atoi(argv[1]); //nur Zahlen 
 	sim->time_to_die = ft_atoi(argv[2]);
 	sim->time_to_eat = ft_atoi(argv[3]);
 	sim->time_to_sleep = ft_atoi(argv[4]);
 	if (argv[5] != NULL)
 		sim->must_eat = ft_atoi(argv[5]);
+	else
+		sim->must_eat = 0;
 	sim->start_time = get_time_in_ms();
 	sim->forks = gc_alloc(sizeof(pthread_mutex_t) * sim->num_philosophers);
-	while (i < sim->num_philosophers)
+	while (i < sim->num_philosophers) 
 	{
 		pthread_mutex_init(&sim->forks[i], NULL);
 		i++;
