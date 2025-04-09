@@ -6,7 +6,7 @@
 /*   By: cwolf <cwolf@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 17:20:04 by cwolf             #+#    #+#             */
-/*   Updated: 2025/04/08 14:13:04 by cwolf            ###   ########.fr       */
+/*   Updated: 2025/04/09 16:29:42 by cwolf            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,14 @@
 #include <pthread.h>
 #include <unistd.h>
 #include <sys/time.h>
+#include <limits.h>
 
 typedef struct s_philosopher {
     int id;
     pthread_t thread;
     long last_meal_time;
     int meals_eaten;
+    int has_both_forks;
     struct s_simulation *sim;
 } t_philosopher;
 
@@ -60,11 +62,13 @@ t_gc_manager			*get_gc_instance(void);
 void					gc_print_list(void);
 
 //Philo
-int	ft_atoi(const char *str);
-t_simulation *init_simulation(int argc, char **argv);
+long	ft_atolo(const char *str);
+t_simulation *init_simulation(char **argv);
 long get_time_in_ms(void);
+long get_time_stamp(t_philosopher *philo);
 void print_simulation_info(t_simulation *sim);
 void start_threads(t_simulation *sim);
 void *routine (void *philosopher);
+int input_time_check(t_simulation *sim, char **argv);
 
 #endif

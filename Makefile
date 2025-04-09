@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror 
 NAME = philo
 SOURCES = main.c utils.c gb_collec.c init.c \
 			testing.c routine.c

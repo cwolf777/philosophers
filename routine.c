@@ -6,7 +6,7 @@
 /*   By: cwolf <cwolf@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 16:25:26 by cwolf             #+#    #+#             */
-/*   Updated: 2025/04/08 15:13:45 by cwolf            ###   ########.fr       */
+/*   Updated: 2025/04/09 16:52:39 by cwolf            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ static int is_near_death(t_philosopher *philo);
 void *routine (void *philosopher)
 {
 	t_philosopher	*philo;
+
 	philo = (t_philosopher *)philosopher;
 	while (check_on_philo(philo) != 1)
 	{
@@ -57,6 +58,7 @@ void *routine (void *philosopher)
 		eat(philo);
 		release_forks(philo);
 		rest(philo);
+
 	}
 	pthread_exit(NULL);
 	return (NULL);
@@ -65,18 +67,20 @@ void *routine (void *philosopher)
 static int check_on_philo(t_philosopher *philo)
 {
 	long	not_eaten;
-	long	now; 
+	long	now;
+	long	time_stamp;
 
 	now = get_time_in_ms();
+	time_stamp = get_time_stamp(philo);
 	not_eaten = now - philo->last_meal_time;
-	if (philo->meals_eaten >= philo->sim->must_eat && philo->sim->must_eat != 0)
+	if (philo->meals_eaten >= philo->sim->must_eat && philo->sim->must_eat != INT_MIN)
 	{
-		printf("%ld Philosopher %d has eaten enough\n", now, philo->id);
+		printf("%ld: Philosopher %d has eaten enough\n", time_stamp, philo->id);
 		return (1);
 	}
 	else if (not_eaten > philo->sim->time_to_die)
 	{
-		printf("%ld Philosopher %d died\n", now, philo->id);
+		printf("%ld: Philosopher %d died\n", time_stamp, philo->id);
 		return (1);
 	}
 	else
@@ -90,7 +94,9 @@ static int	can_philo_eat(t_philosopher *philo)
 	int	right_id;
 	t_philosopher	*right_philo;
 	t_philosopher	*left_philo;
-
+	
+	if (philo->sim->num_philosophers == 1)
+		return (1);
 	pthread_mutex_lock(&philo->sim->monitor_lock);
 	left_id = (philo->id - 1 + philo->sim->num_philosophers) % philo->sim->num_philosophers;
 	right_id = (philo->id + 1) % philo->sim->num_philosophers;
@@ -120,7 +126,7 @@ static int is_near_death(t_philosopher *philo)
 
 static void think(t_philosopher *philo)
 {
-	printf("%ld: %d is thinking\n", get_time_in_ms(), philo->id);
+	printf("%ld: %d is thinking\n", get_time_stamp(philo), philo->id);
 }
 
 static void take_forks(t_philosopher *philo)
@@ -130,27 +136,36 @@ static void take_forks(t_philosopher *philo)
 	while (!can_philo_eat(philo))
 		usleep(200);
 	pthread_mutex_lock(&philo->sim->forks[philo->id]);
-	printf("%ld: %d has taken a fork\n", get_time_in_ms(), philo->id);
+	printf("%ld: %d has taken a fork\n", get_time_stamp(philo), philo->id);
+	if (philo->sim->num_philosophers == 1)
+		return ;
 	pthread_mutex_lock(&philo->sim->forks[(philo->id + 1) % philo->sim->num_philosophers]);
-	printf("%ld: %d has taken a fork\n", get_time_in_ms(), philo->id);	
+	printf("%ld: %d has taken a fork\n", get_time_stamp(philo), philo->id);
+	philo->has_both_forks = 1;
+	return ;
 }
 
 static void eat(t_philosopher *philo)
 {
-	printf("%ld: %d is eating\n", get_time_in_ms(), philo->id);
-	philo->last_meal_time = get_time_in_ms();
-	philo->meals_eaten++;
-	usleep(philo->sim->time_to_eat * 1000);
+	if (philo->has_both_forks == 1)
+	{
+		printf("%ld: %d is eating\n", get_time_stamp(philo), philo->id);
+		philo->last_meal_time = get_time_in_ms();
+		philo->meals_eaten++;
+		usleep(philo->sim->time_to_eat * 1000);
+	}
 }
 
 static void release_forks(t_philosopher *philo)
 {
 	pthread_mutex_unlock(&philo->sim->forks[philo->id]);
-	pthread_mutex_unlock(&philo->sim->forks[(philo->id + 1) % philo->sim->num_philosophers]);
+	if (philo->sim->num_philosophers != 1)
+		pthread_mutex_unlock(&philo->sim->forks[(philo->id + 1) % philo->sim->num_philosophers]);
+	philo->has_both_forks = 0;
 }
 
 static void rest(t_philosopher *philo)
 {
-	printf("%ld: %d is sleeping\n", get_time_in_ms(), philo->id);
+	printf("%ld: %d is sleeping\n", get_time_stamp(philo), philo->id);
 	usleep(philo->sim->time_to_sleep * 1000);
 }

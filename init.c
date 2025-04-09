@@ -6,29 +6,30 @@
 /*   By: cwolf <cwolf@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 14:27:12 by cwolf             #+#    #+#             */
-/*   Updated: 2025/04/07 17:14:45 by cwolf            ###   ########.fr       */
+/*   Updated: 2025/04/09 16:30:24 by cwolf            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-t_simulation *init_simulation(int argc, char **argv)
+t_simulation *init_simulation(char **argv)
 {
-	argc = argc + 0; //weg
 	t_simulation *sim;
 	int				i;
 
 	i = 0;
 	sim = gc_alloc(sizeof(t_simulation));
 
-	sim->num_philosophers = ft_atoi(argv[1]); //nur Zahlen 
-	sim->time_to_die = ft_atoi(argv[2]);
-	sim->time_to_eat = ft_atoi(argv[3]);
-	sim->time_to_sleep = ft_atoi(argv[4]);
+	sim->num_philosophers = ft_atolo(argv[1]);
+	sim->time_to_die = ft_atolo(argv[2]);
+	sim->time_to_eat = ft_atolo(argv[3]);
+	sim->time_to_sleep = ft_atolo(argv[4]);
 	if (argv[5] != NULL)
-		sim->must_eat = ft_atoi(argv[5]);
+		sim->must_eat = ft_atolo(argv[5]);
 	else
-		sim->must_eat = 0;
+		sim->must_eat = INT_MIN;
+	if (input_time_check(sim, argv) == 0)
+		return (NULL);
 	sim->start_time = get_time_in_ms();
 	sim->forks = gc_alloc(sizeof(pthread_mutex_t) * sim->num_philosophers);
 	while (i < sim->num_philosophers) 
@@ -41,10 +42,11 @@ t_simulation *init_simulation(int argc, char **argv)
 	i = 0;
 	while (i < sim->num_philosophers)
 	{
-		sim->philosophers[i].id = i;
+		sim->philosophers[i].id = i + 1;
 		sim->philosophers[i].sim = sim;
 		sim->philosophers[i].last_meal_time = sim->start_time;
 		sim->philosophers[i].meals_eaten = 0;
+		sim->philosophers[i].has_both_forks = 0; //0 = nein
 		i++;
 	}
 	return (sim);
