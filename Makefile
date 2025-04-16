@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror 
+CFLAGS = -Wall -Wextra -Werror -fsanitize=address
 NAME = philo
 SOURCES = main.c utils.c gb_collec.c init.c \
 			testing.c routine.c

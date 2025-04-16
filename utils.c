@@ -6,7 +6,7 @@
 /*   By: cwolf <cwolf@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 17:53:20 by cwolf             #+#    #+#             */
-/*   Updated: 2025/04/09 14:49:20 by cwolf            ###   ########.fr       */
+/*   Updated: 2025/04/16 09:46:12 by cwolf            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ long get_time_in_ms(void)
 {
 	struct timeval	tv;
 	gettimeofday(&tv, NULL);
-	return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
+	return (tv.tv_sec * 1000 + tv.tv_usec / 1000); //Millisekunden
 }
 
 long get_time_stamp(t_philosopher *philo)
@@ -74,4 +74,53 @@ int input_time_check(t_simulation *sim, char **argv)
 		return (0);
 	else
 		return (1);
+}
+
+int check_death_flag(t_philosopher *philo)
+{
+	int	dead;
+	pthread_mutex_lock(&philo->sim->death_lock);
+	dead = philo->sim->sb_died;
+	pthread_mutex_unlock(&philo->sim->death_lock);
+	return	(dead);
+}
+int check_full_flag(t_philosopher *philo)
+{
+	int	finished;
+	// pthread_mutex_lock(&philo->sim.);
+	finished = philo->is_full;
+	// pthread_mutex_unlock(&philo->sim->death_lock);
+	return(finished);
+}
+
+void smart_sleep(t_philosopher *philo, long duration)
+{
+	long	start;
+	long	left;
+
+	start = get_time_in_ms();
+	while(get_time_in_ms() - start < duration)
+	{
+		if (check_death_flag(philo))
+			break ;
+		left = duration - (get_time_in_ms() - start);
+		if (left > 1000)
+			usleep(left / 2 * 1000);
+		else
+		{
+			while (get_time_in_ms() - start < duration)
+				;
+		}
+	}
+}
+
+void one_philo_case(t_philosopher *philo)
+{
+	t_simulation *sim;
+	int	duration;
+	
+	sim = philo->sim;
+	duration = sim->time_to_die + 100;
+	smart_sleep(philo, duration);
+	return ;
 }

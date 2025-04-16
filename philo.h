@@ -6,7 +6,7 @@
 /*   By: cwolf <cwolf@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 17:20:04 by cwolf             #+#    #+#             */
-/*   Updated: 2025/04/09 16:29:42 by cwolf            ###   ########.fr       */
+/*   Updated: 2025/04/16 09:45:30 by cwolf            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,12 +20,20 @@
 #include <sys/time.h>
 #include <limits.h>
 
+
+typedef struct s_waiter{
+    pthread_t thread;
+    struct s_simulation *sim;
+}  t_waiter;
+
 typedef struct s_philosopher {
     int id;
     pthread_t thread;
+    pthread_mutex_t meal_lock;
     long last_meal_time;
     int meals_eaten;
     int has_both_forks;
+    int is_full;
     struct s_simulation *sim;
 } t_philosopher;
 
@@ -35,12 +43,17 @@ typedef struct s_simulation {
     int time_to_eat;
     int time_to_sleep;
     int must_eat;
+    int sb_died;
+    int all_full;
+    pthread_mutex_t death_lock;
     pthread_mutex_t *forks; // mutex auf forks
     pthread_mutex_t print_lock; // mutex auf print ausgabe 
-    pthread_mutex_t monitor_lock; //mutex auf Kellner
     t_philosopher *philosophers; // array von Philosophen 
+    t_waiter *waiter; //pointer auf waiter? mit oder ohen stern
     long start_time; // Startzeitpunkt der Simulation
 } t_simulation;
+
+
 
 // GARBAGE COLLECTOR
 
@@ -69,6 +82,13 @@ long get_time_stamp(t_philosopher *philo);
 void print_simulation_info(t_simulation *sim);
 void start_threads(t_simulation *sim);
 void *routine (void *philosopher);
+void *waiter_routine(void *simulation);
 int input_time_check(t_simulation *sim, char **argv);
+int check_death_flag(t_philosopher *philo);
+// void	update_prios(t_simulation *sim);
+// int prio_check_neighbor(t_philosopher *philo);
+void smart_sleep(t_philosopher *philo, long duration);
+int check_full_flag(t_philosopher *philo);
+void one_philo_case(t_philosopher *philo);
 
 #endif
