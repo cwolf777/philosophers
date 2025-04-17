@@ -6,7 +6,7 @@
 /*   By: cwolf <cwolf@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 17:53:20 by cwolf             #+#    #+#             */
-/*   Updated: 2025/04/17 09:22:43 by cwolf            ###   ########.fr       */
+/*   Updated: 2025/04/17 14:57:02 by cwolf            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,9 +87,9 @@ int check_death_flag(t_philosopher *philo)
 int check_full_flag(t_philosopher *philo)
 {
 	int	finished;
-	// pthread_mutex_lock(&philo->sim.);
+	pthread_mutex_lock(&philo->is_full_lock);
 	finished = philo->is_full;
-	// pthread_mutex_unlock(&philo->sim->death_lock);
+	pthread_mutex_unlock(&philo->is_full_lock);
 	return(finished);
 }
 
@@ -122,5 +122,25 @@ void one_philo_case(t_philosopher *philo)
 	sim = philo->sim;
 	duration = sim->time_to_die + 100;
 	smart_sleep(philo, duration);
+	// pthread_mutex_unlock(&philo->sim->forks[philo->id]);
 	return ;
+}
+
+void cleanup(t_simulation *sim)
+{
+	int	i;
+
+	i = 0;
+	pthread_mutex_destroy(&sim->print_lock);
+	pthread_mutex_destroy(&sim->death_lock);
+	while (i < sim->num_philosophers)
+	{
+		pthread_mutex_destroy(&sim->forks[i]);
+		pthread_mutex_destroy(&sim->philosophers[i].meal_lock);
+		pthread_mutex_destroy(&sim->philosophers[i].is_full_lock);
+		i++;
+	}
+	gc_free_all();
+	return ;
+	
 }

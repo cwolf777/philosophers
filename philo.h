@@ -6,7 +6,7 @@
 /*   By: cwolf <cwolf@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 17:20:04 by cwolf             #+#    #+#             */
-/*   Updated: 2025/04/16 09:45:30 by cwolf            ###   ########.fr       */
+/*   Updated: 2025/04/17 15:17:06 by cwolf            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ typedef struct s_philosopher {
     int id;
     pthread_t thread;
     pthread_mutex_t meal_lock;
+    pthread_mutex_t is_full_lock;
     long last_meal_time;
     int meals_eaten;
     int has_both_forks;
@@ -70,9 +71,9 @@ typedef struct s_gc_manager
 
 void					*gc_alloc(int size);
 void					gc_free_all(void);
-void					gc_free_one(void *ptr);
+// void					gc_free_one(void *ptr);
 t_gc_manager			*get_gc_instance(void);
-void					gc_print_list(void);
+// void					gc_print_list(void);
 
 //Philo
 long	ft_atolo(const char *str);
@@ -90,5 +91,6 @@ int check_death_flag(t_philosopher *philo);
 void smart_sleep(t_philosopher *philo, long duration);
 int check_full_flag(t_philosopher *philo);
 void one_philo_case(t_philosopher *philo);
+void cleanup(t_simulation *sim);
 
 #endif

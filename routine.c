@@ -6,7 +6,7 @@
 /*   By: cwolf <cwolf@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 16:25:26 by cwolf             #+#    #+#             */
-/*   Updated: 2025/04/17 10:34:19 by cwolf            ###   ########.fr       */
+/*   Updated: 2025/04/17 14:57:17 by cwolf            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ void start_threads(t_simulation *sim)
 		i++;
 	}
 	pthread_join(sim->waiter->thread, NULL);
+	cleanup(sim);
 	//pthread destroy gegen leaks
 	// Alle Philosophen-Threads beenden (z.B. durch shared flags oder pthread_cancel)
 	// Speicher freigeben
@@ -91,7 +92,9 @@ void *waiter_routine(void *simulation)
 			if (sim->must_eat != INT_MIN && philo->meals_eaten == sim->must_eat && philo->is_full == 0)
 			{
 				finished++;
+				pthread_mutex_lock(&philo->is_full_lock);
 				philo->is_full = 1;
+				pthread_mutex_unlock(&philo->is_full_lock);
 				pthread_mutex_lock(&sim->print_lock);
 				printf("%ld: Philosopher %d has eaten enough!\n", get_time_stamp(philo), philo->id + 1);
 				pthread_mutex_unlock(&sim->print_lock);
@@ -144,17 +147,27 @@ static void think(t_philosopher *philo)
 
 static void take_forks(t_philosopher *philo)
 {
-	// int	time_stamp;
+	int	first;
+	int	second;
+	int	tmp;
+	
+	first = philo->id;
+	second = (philo->id + 1) % philo->sim->num_philosophers;
 
-	// if (check_death_flag(philo))
-	// 	return ;
+	if (first > second)
+	{
+		tmp = first;
+		first = second;
+		second = tmp;
+	}
+	
 	if (philo->id % 2 != 0)
 	{
 		usleep(100);
 	}
-	pthread_mutex_lock(&philo->sim->forks[philo->id]);
+	pthread_mutex_lock(&philo->sim->forks[first]);
 	pthread_mutex_lock(&philo->sim->print_lock);
-	if (check_death_flag(philo) == 0)
+	if (check_death_flag(philo) == 0)		
 		printf("%ld: %d has taken a fork\n", get_time_stamp(philo), philo->id + 1);
 	pthread_mutex_unlock(&philo->sim->print_lock);
 	if (philo->sim->num_philosophers == 1)
@@ -162,7 +175,7 @@ static void take_forks(t_philosopher *philo)
 		one_philo_case(philo);
 		return ;
 	}
-	pthread_mutex_lock(&philo->sim->forks[(philo->id + 1) % philo->sim->num_philosophers]);
+	pthread_mutex_lock(&philo->sim->forks[second]);
 	pthread_mutex_lock(&philo->sim->print_lock);
 	if (check_death_flag(philo) == 0)
 		printf("%ld: %d has taken a fork\n", get_time_stamp(philo), philo->id + 1);
