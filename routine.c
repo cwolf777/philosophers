@@ -6,7 +6,7 @@
 /*   By: cwolf <cwolf@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 16:25:26 by cwolf             #+#    #+#             */
-/*   Updated: 2025/04/16 10:02:55 by cwolf            ###   ########.fr       */
+/*   Updated: 2025/04/17 10:34:19 by cwolf            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,13 +18,6 @@ void start_threads(t_simulation *sim)
 	int res;
 
 	i = 0;
-	res = pthread_create(&sim->waiter->thread, NULL, waiter_routine, sim);
-	if (res != 0)
-	{
-		printf("Failed creating waiter thread!\n");
-		exit(1); // EXIT FUNKLTION NÖTIG	
-	}
-	i = 0;
 	while (i < sim->num_philosophers)
 	{
 		res = pthread_create(&sim->philosophers[i].thread, NULL, routine, &sim->philosophers[i]);
@@ -34,6 +27,13 @@ void start_threads(t_simulation *sim)
 			exit(1); // EXIT FUNKLTION NÖTIG	
 		}
 		i++;
+	}
+	i = 0;
+	res = pthread_create(&sim->waiter->thread, NULL, waiter_routine, sim);
+	if (res != 0)
+	{
+		printf("Failed creating waiter thread!\n");
+		exit(1); // EXIT FUNKLTION NÖTIG	
 	}
 	while(i < sim->num_philosophers)
 	{
@@ -77,7 +77,7 @@ void *waiter_routine(void *simulation)
 			philo = &sim->philosophers[i];
 			pthread_mutex_lock(&philo->meal_lock);
 			now = get_time_in_ms();
-			if (now - philo->last_meal_time > sim->time_to_die)
+			if (now - philo->last_meal_time > sim->time_to_die ) //!!!! && philo->sim->sb_died == 0
 			{
 				pthread_mutex_unlock(&philo->meal_lock);
 				pthread_mutex_lock(&sim->print_lock);
@@ -125,7 +125,7 @@ void *routine (void *philosopher)
 		eat(philo);
 		release_forks(philo);
 		if (check_full_flag(philo))
-			break ; 
+			break ;
 		rest(philo);
 	}
 	// pthread_exit(NULL);
@@ -134,10 +134,11 @@ void *routine (void *philosopher)
 
 static void think(t_philosopher *philo)
 {
-	if (check_death_flag(philo))
-		return ;
+	// if (check_death_flag(philo))
+	// 	return ;
 	pthread_mutex_lock(&philo->sim->print_lock);
-	printf("%ld: %d is thinking\n", get_time_stamp(philo), philo->id + 1);
+	if (check_death_flag(philo) == 0)
+		printf("%ld: %d is thinking\n", get_time_stamp(philo), philo->id + 1);
 	pthread_mutex_unlock(&philo->sim->print_lock);
 }
 
@@ -145,15 +146,16 @@ static void take_forks(t_philosopher *philo)
 {
 	// int	time_stamp;
 
-	if (check_death_flag(philo))
-		return ;
+	// if (check_death_flag(philo))
+	// 	return ;
 	if (philo->id % 2 != 0)
 	{
 		usleep(100);
 	}
 	pthread_mutex_lock(&philo->sim->forks[philo->id]);
 	pthread_mutex_lock(&philo->sim->print_lock);
-	printf("%ld: %d has taken a fork\n", get_time_stamp(philo), philo->id + 1);
+	if (check_death_flag(philo) == 0)
+		printf("%ld: %d has taken a fork\n", get_time_stamp(philo), philo->id + 1);
 	pthread_mutex_unlock(&philo->sim->print_lock);
 	if (philo->sim->num_philosophers == 1)
 	{
@@ -162,7 +164,8 @@ static void take_forks(t_philosopher *philo)
 	}
 	pthread_mutex_lock(&philo->sim->forks[(philo->id + 1) % philo->sim->num_philosophers]);
 	pthread_mutex_lock(&philo->sim->print_lock);
-	printf("%ld: %d has taken a fork\n", get_time_stamp(philo), philo->id + 1);
+	if (check_death_flag(philo) == 0)
+		printf("%ld: %d has taken a fork\n", get_time_stamp(philo), philo->id + 1);
 	pthread_mutex_unlock(&philo->sim->print_lock);
 	philo->has_both_forks = 1;
 
@@ -171,14 +174,15 @@ static void take_forks(t_philosopher *philo)
 
 static void eat(t_philosopher *philo)
 {
-	if (check_death_flag(philo))
-		return ;
+	// if (check_death_flag(philo))
+	// 	return ;
 	
 	if (philo->has_both_forks == 1)
 	{
 		pthread_mutex_lock(&philo->meal_lock);
 		pthread_mutex_lock(&philo->sim->print_lock);
-		printf("%ld: %d is eating\n", get_time_stamp(philo), philo->id + 1);
+		if (check_death_flag(philo) == 0)
+			printf("%ld: %d is eating\n", get_time_stamp(philo), philo->id + 1);
 		pthread_mutex_unlock(&philo->sim->print_lock);
 		philo->last_meal_time = get_time_in_ms();
 		philo->meals_eaten++;
@@ -189,8 +193,8 @@ static void eat(t_philosopher *philo)
 
 static void release_forks(t_philosopher *philo)
 {
-	if (check_death_flag(philo))
-		return ;
+	// if (check_death_flag(philo))
+	// 	return ;
 	pthread_mutex_unlock(&philo->sim->forks[philo->id]);
 	if (philo->sim->num_philosophers != 1)
 		pthread_mutex_unlock(&philo->sim->forks[(philo->id + 1) % philo->sim->num_philosophers]);
@@ -200,8 +204,8 @@ static void release_forks(t_philosopher *philo)
 static void rest(t_philosopher *philo)
 {
 	// long	now;
-	if (check_death_flag(philo))
-		return ;
+	// if (check_death_flag(philo))
+	// 	return ;
 
 	// now = get_time_in_ms();
 	// if (now - philo->last_meal_time + philo->sim->time_to_sleep > philo->sim->time_to_die)
@@ -210,7 +214,8 @@ static void rest(t_philosopher *philo)
 	// }
 
 	pthread_mutex_lock(&philo->sim->print_lock);
-	printf("%ld: %d is sleeping\n", get_time_stamp(philo), philo->id + 1);
+	if (check_death_flag(philo) == 0)
+		printf("%ld: %d is sleeping\n", get_time_stamp(philo), philo->id + 1);
 	pthread_mutex_unlock(&philo->sim->print_lock);
 	smart_sleep(philo, philo->sim->time_to_sleep);
 }
