@@ -1,8 +1,9 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror
 NAME = philo
-SOURCES = main.c utils.c gb_collec.c init.c \
-			testing.c routine.c
+SOURCES = main.c utils.c utils_time.c philo_status.c gb_collec.c init.c \
+			philo_routine.c philo_routine2.c waiter_routine.c \
+			start_threads.c
 OBJECTS = $(SOURCES:.c=.o)
 
 all:$(NAME)

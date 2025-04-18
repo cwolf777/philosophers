@@ -1,29 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   philo_status.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cwolf <cwolf@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/31 17:19:46 by cwolf             #+#    #+#             */
-/*   Updated: 2025/04/18 15:25:20 by cwolf            ###   ########.fr       */
+/*   Created: 2025/04/18 15:23:45 by cwolf             #+#    #+#             */
+/*   Updated: 2025/04/18 15:26:56 by cwolf            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	main(int argc, char **argv)
+int	check_death_flag(t_philosopher *philo)
 {
-	t_simulation	*sim;
+	int	dead;
 
-	if (argc < 5 || argc > 6)
-		return (printf("Wrong amount of arguments!\n"));
-	sim = init_simulation(argv);
-	if (sim == NULL)
-	{
-		printf("Failure while initiliazing\n");
-		return (EXIT_FAILURE);
-	}
-	start_threads(sim);
-	return (0);
+	pthread_mutex_lock(&philo->sim->death_lock);
+	dead = philo->sim->sb_died;
+	pthread_mutex_unlock(&philo->sim->death_lock);
+	return (dead);
+}
+
+int	check_full_flag(t_philosopher *philo)
+{
+	int	finished;
+
+	pthread_mutex_lock(&philo->is_full_lock);
+	finished = philo->is_full;
+	pthread_mutex_unlock(&philo->is_full_lock);
+	return (finished);
 }

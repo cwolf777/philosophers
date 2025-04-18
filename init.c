@@ -6,21 +6,21 @@
 /*   By: cwolf <cwolf@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 14:27:12 by cwolf             #+#    #+#             */
-/*   Updated: 2025/04/18 12:49:48 by cwolf            ###   ########.fr       */
+/*   Updated: 2025/04/18 14:10:28 by cwolf            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static t_simulation *init_sim_memory(char **argv);
-static int init_sim_flags (t_simulation *sim, char **argv);
-static void init_sim_locks(t_simulation *sim);
-static void init_philo_flags(t_simulation *sim);
+static t_simulation	*init_sim_memory(char **argv);
+static int			init_sim_flags(t_simulation *sim, char **argv);
+static void			init_sim_locks(t_simulation *sim);
+static void			init_philo_flags(t_simulation *sim);
 
-t_simulation *init_simulation(char **argv)
+t_simulation	*init_simulation(char **argv)
 {
-	t_simulation *sim;
-	
+	t_simulation	*sim;
+
 	sim = init_sim_memory(argv);
 	if (!sim)
 		return (NULL);
@@ -29,9 +29,9 @@ t_simulation *init_simulation(char **argv)
 	return (sim);
 }
 
-static t_simulation *init_sim_memory(char **argv)
+static t_simulation	*init_sim_memory(char **argv)
 {
-	t_simulation *sim;
+	t_simulation	*sim;
 
 	sim = gc_alloc(sizeof(t_simulation));
 	if (!sim)
@@ -51,7 +51,7 @@ static t_simulation *init_sim_memory(char **argv)
 	return (sim);
 }
 
-static int init_sim_flags (t_simulation *sim, char **argv)
+static int	init_sim_flags(t_simulation *sim, char **argv)
 {
 	sim->num_philosophers = ft_atolo(argv[1]);
 	sim->time_to_die = ft_atolo(argv[2]);
@@ -69,7 +69,7 @@ static int init_sim_flags (t_simulation *sim, char **argv)
 	return (1);
 }
 
-static void init_sim_locks(t_simulation *sim)
+static void	init_sim_locks(t_simulation *sim)
 {
 	int	i;
 
@@ -86,7 +86,7 @@ static void init_sim_locks(t_simulation *sim)
 	return ;
 }
 
-static void init_philo_flags(t_simulation *sim)
+static void	init_philo_flags(t_simulation *sim)
 {
 	int	i;
 
@@ -101,5 +101,4 @@ static void init_philo_flags(t_simulation *sim)
 		sim->philosophers[i].is_full = 0;
 		i++;
 	}
-	
 }
