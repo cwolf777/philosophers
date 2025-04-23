@@ -6,12 +6,12 @@
 /*   By: cwolf <cwolf@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 17:20:04 by cwolf             #+#    #+#             */
-/*   Updated: 2025/04/18 15:17:05 by cwolf            ###   ########.fr       */
+/*   Updated: 2025/04/23 11:20:54 by cwolf            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PUSH_SWAP_H
-# define PUSH_SWAP_H
+#ifndef PHILO_H
+# define PHILO_H
 
 # include <stdio.h>
 # include <stdlib.h>
@@ -19,7 +19,6 @@
 # include <unistd.h>
 # include <sys/time.h>
 # include <limits.h>
-
 
 typedef struct s_waiter
 {
@@ -56,8 +55,6 @@ typedef struct s_simulation
 	t_waiter		*waiter;
 	long			start_time;
 }			t_simulation;
-
-
 
 // GARBAGE COLLECTOR
 

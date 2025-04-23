@@ -6,7 +6,7 @@
 /*   By: cwolf <cwolf@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 15:14:12 by cwolf             #+#    #+#             */
-/*   Updated: 2025/04/18 15:26:43 by cwolf            ###   ########.fr       */
+/*   Updated: 2025/04/23 11:21:20 by cwolf            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,8 @@ void	release_forks(t_philosopher *philo)
 {
 	pthread_mutex_unlock(&philo->sim->forks[philo->id]);
 	if (philo->sim->num_philosophers != 1)
-		pthread_mutex_unlock(&philo->sim->forks[(philo->id + 1) % philo->sim->num_philosophers]);
+		pthread_mutex_unlock(&philo->sim->forks[(philo->id + 1)
+			% philo->sim->num_philosophers]);
 	philo->has_both_forks = 0;
 }
 
