@@ -6,7 +6,7 @@
 /*   By: cwolf <cwolf@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 14:27:12 by cwolf             #+#    #+#             */
-/*   Updated: 2025/04/18 14:10:28 by cwolf            ###   ########.fr       */
+/*   Updated: 2025/04/23 14:03:22 by cwolf            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,10 @@ t_simulation	*init_simulation(char **argv)
 
 	sim = init_sim_memory(argv);
 	if (!sim)
+	{
+		gc_free_all();
 		return (NULL);
+	}
 	init_sim_locks(sim);
 	init_philo_flags(sim);
 	return (sim);
