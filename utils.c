@@ -6,7 +6,7 @@
 /*   By: cwolf <cwolf@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 17:53:20 by cwolf             #+#    #+#             */
-/*   Updated: 2025/04/18 15:24:34 by cwolf            ###   ########.fr       */
+/*   Updated: 2025/04/23 13:25:27 by cwolf            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,8 +69,13 @@ void	one_philo_case(t_philosopher *philo)
 
 	sim = philo->sim;
 	duration = sim->time_to_die + 100;
+	pthread_mutex_lock(&philo->sim->print_lock);
+	if (check_death_flag(philo) == 0)
+		printf("%ld: %d is thinking\n", get_time_stamp(philo), philo->id + 1);
+	pthread_mutex_unlock(&philo->sim->print_lock);
+	lock_first_fork(philo, philo->id);
 	smart_sleep(philo, duration);
-	// pthread_mutex_unlock(&philo->sim->forks[philo->id]);
+	pthread_mutex_unlock(&philo->sim->forks[philo->id]);
 	return ;
 }
 
