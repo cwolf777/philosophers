@@ -6,7 +6,7 @@
 /*   By: cwolf <cwolf@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 16:25:26 by cwolf             #+#    #+#             */
-/*   Updated: 2025/04/23 13:23:27 by cwolf            ###   ########.fr       */
+/*   Updated: 2025/04/23 15:11:38 by cwolf            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ void	think(t_philosopher *philo)
 {
 	pthread_mutex_lock(&philo->sim->print_lock);
 	if (check_death_flag(philo) == 0)
-		printf("%ld: %d is thinking\n", get_time_stamp(philo), philo->id + 1);
+		printf("%ld %d is thinking\n", get_time_stamp(philo), philo->id + 1);
 	pthread_mutex_unlock(&philo->sim->print_lock);
 }
 
@@ -74,7 +74,7 @@ void	lock_first_fork(t_philosopher *philo, int index)
 	pthread_mutex_lock(&philo->sim->forks[index]);
 	pthread_mutex_lock(&philo->sim->print_lock);
 	if (!check_death_flag(philo))
-		printf("%ld: %d has taken a fork\n",
+		printf("%ld %d has taken a fork\n",
 			get_time_stamp(philo), philo->id + 1);
 	pthread_mutex_unlock(&philo->sim->print_lock);
 }
@@ -84,7 +84,7 @@ void	lock_second_fork(t_philosopher *philo, int index)
 	pthread_mutex_lock(&philo->sim->forks[index]);
 	pthread_mutex_lock(&philo->sim->print_lock);
 	if (!check_death_flag(philo))
-		printf("%ld: %d has taken a fork\n",
+		printf("%ld %d has taken a fork\n",
 			get_time_stamp(philo), philo->id + 1);
 	pthread_mutex_unlock(&philo->sim->print_lock);
 }
