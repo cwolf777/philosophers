@@ -6,7 +6,7 @@
 /*   By: cwolf <cwolf@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 17:53:20 by cwolf             #+#    #+#             */
-/*   Updated: 2025/04/23 13:25:27 by cwolf            ###   ########.fr       */
+/*   Updated: 2025/04/24 15:39:20 by cwolf            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,25 +41,13 @@ long	ft_atolo(const char *str)
 	return (number * minus_check);
 }
 
-void	smart_sleep(t_philosopher *philo, long duration)
+void	smart_sleep(long duration)
 {
 	long	start;
-	long	left;
 
 	start = get_time_in_ms();
-	while (get_time_in_ms() - start < duration)
-	{
-		if (check_death_flag(philo))
-			break ;
-		left = duration - (get_time_in_ms() - start);
-		if (left > 1000)
-			usleep(left / 2 * 1000);
-		else
-		{
-			while (get_time_in_ms() - start < duration)
-				;
-		}
-	}
+	while ((get_time_in_ms() - start) < duration)
+		usleep(500);
 }
 
 void	one_philo_case(t_philosopher *philo)
@@ -74,7 +62,7 @@ void	one_philo_case(t_philosopher *philo)
 		printf("%ld: %d is thinking\n", get_time_stamp(philo), philo->id + 1);
 	pthread_mutex_unlock(&philo->sim->print_lock);
 	lock_first_fork(philo, philo->id);
-	smart_sleep(philo, duration);
+	smart_sleep(duration);
 	pthread_mutex_unlock(&philo->sim->forks[philo->id]);
 	return ;
 }

@@ -6,7 +6,7 @@
 /*   By: cwolf <cwolf@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 15:23:15 by cwolf             #+#    #+#             */
-/*   Updated: 2025/04/18 15:27:13 by cwolf            ###   ########.fr       */
+/*   Updated: 2025/04/23 15:35:53 by cwolf            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,8 @@ int	input_time_check(t_simulation *sim, char **argv)
 	else if (sim->time_to_die > INT_MAX || sim->time_to_eat > INT_MAX
 		|| sim->time_to_sleep > INT_MAX
 		|| sim->num_philosophers > INT_MAX || sim->must_eat > INT_MAX)
+		return (0);
+	else if (sim->num_philosophers > 200)
 		return (0);
 	else
 		return (1);

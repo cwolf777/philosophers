@@ -6,7 +6,7 @@
 /*   By: cwolf <cwolf@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 13:07:34 by cwolf             #+#    #+#             */
-/*   Updated: 2025/04/23 15:14:35 by cwolf            ###   ########.fr       */
+/*   Updated: 2025/04/24 15:45:21 by cwolf            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,10 +76,6 @@ static void	check_philo_meals(t_simulation *sim,
 		pthread_mutex_lock(&philo->is_full_lock);
 		philo->is_full = 1;
 		pthread_mutex_unlock(&philo->is_full_lock);
-		// pthread_mutex_lock(&sim->print_lock);
-		// printf("%ld: Philosopher %d has eaten enough!\n",
-		// 	get_time_stamp(philo), philo->id + 1);
-		// pthread_mutex_unlock(&sim->print_lock);
 	}
 	pthread_mutex_unlock(&philo->meal_lock);
 }
@@ -88,9 +84,6 @@ static int	all_philos_full(t_simulation *sim, int finished)
 {
 	if (finished == sim->num_philosophers)
 	{
-		// pthread_mutex_lock(&sim->print_lock);
-		// printf("All Philosophers have eaten enough!\n");
-		// pthread_mutex_unlock(&sim->print_lock);
 		sim->all_full = 1;
 		return (1);
 	}

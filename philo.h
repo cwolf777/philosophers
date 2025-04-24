@@ -6,7 +6,7 @@
 /*   By: cwolf <cwolf@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 17:20:04 by cwolf             #+#    #+#             */
-/*   Updated: 2025/04/23 11:20:54 by cwolf            ###   ########.fr       */
+/*   Updated: 2025/04/24 15:33:41 by cwolf            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ void			*routine(void *philosopher);
 void			*waiter_routine(void *simulation);
 int				input_time_check(t_simulation *sim, char **argv);
 int				check_death_flag(t_philosopher *philo);
-void			smart_sleep(t_philosopher *philo, long duration);
+void			smart_sleep(long duration);
 int				check_full_flag(t_philosopher *philo);
 void			one_philo_case(t_philosopher *philo);
 void			cleanup(t_simulation *sim);

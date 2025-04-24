@@ -6,7 +6,7 @@
 /*   By: cwolf <cwolf@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 16:25:26 by cwolf             #+#    #+#             */
-/*   Updated: 2025/04/23 15:11:38 by cwolf            ###   ########.fr       */
+/*   Updated: 2025/04/24 15:44:05 by cwolf            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,6 @@ void	*routine(void *philosopher)
 	}
 }
 
-//in if lock und unlopck?
 void	think(t_philosopher *philo)
 {
 	pthread_mutex_lock(&philo->sim->print_lock);
@@ -57,16 +56,10 @@ void	take_forks(t_philosopher *philo)
 	if (first > second)
 		swap_inits(&first, &second);
 	if (philo->id % 2 != 0)
-		usleep(100);
-	lock_first_fork(philo, first);
-	// if (philo->sim->num_philosophers == 1)
-	// {
-	// 	one_philo_case(philo);
-	// 	// pthread_mutex_unlock(&philo->sim->print_lock);
-	// 	return ;
-	// }
+	{
+		lock_first_fork(philo, first);
+	}
 	lock_second_fork(philo, second);
-	philo->has_both_forks = 1;
 }
 
 void	lock_first_fork(t_philosopher *philo, int index)
