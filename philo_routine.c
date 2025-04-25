@@ -6,7 +6,7 @@
 /*   By: cwolf <cwolf@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 16:25:26 by cwolf             #+#    #+#             */
-/*   Updated: 2025/04/24 15:44:05 by cwolf            ###   ########.fr       */
+/*   Updated: 2025/04/24 15:59:49 by cwolf            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,15 +24,17 @@ void	*routine(void *philosopher)
 	}
 	else
 	{
+		if (philo->id % 2 != 0)
+			usleep(100);
 		while (!check_death_flag(philo))
 		{
-			think(philo);
 			take_forks(philo);
 			eat(philo);
 			release_forks(philo);
 			if (check_full_flag(philo))
 				break ;
 			rest(philo);
+			think(philo);
 		}
 		return (NULL);
 	}
@@ -58,8 +60,13 @@ void	take_forks(t_philosopher *philo)
 	if (philo->id % 2 != 0)
 	{
 		lock_first_fork(philo, first);
+		lock_second_fork(philo, second);
 	}
-	lock_second_fork(philo, second);
+	else
+	{
+		lock_second_fork(philo, second);
+		lock_first_fork(philo, first);
+	}
 }
 
 void	lock_first_fork(t_philosopher *philo, int index)
