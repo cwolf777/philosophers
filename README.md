@@ -32,6 +32,7 @@ A dedicated thread controlling philosophers’ lifecycle, monitoring their state
 
 
 🔧 **Key Features**
+
 Fork acquisition with proper mutex locking
 
 Philosopher lifecycle management (think, eat, sleep)
