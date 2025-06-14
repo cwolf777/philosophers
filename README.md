@@ -19,6 +19,7 @@ Mutexes to prevent race conditions on shared forks
 
 Time management to track philosophers’ states accurately
 
+
 🧠 **Custom Utilities**
 
 Garbage Collector
@@ -28,6 +29,7 @@ Simplifies memory management by tracking all dynamic allocations and freeing the
 Waiter Thread
 
 A dedicated thread controlling philosophers’ lifecycle, monitoring their states, and ensuring no philosopher starves or deadlocks occur.
+
 
 🔧 **Key Features**
 Fork acquisition with proper mutex locking
@@ -39,6 +41,7 @@ Thread-safe printing for console output
 Timed checks for philosopher death conditions
 
 Graceful shutdown and resource cleanup
+
 
 💬 **Example Usage**
 
